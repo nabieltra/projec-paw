@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1" name="viewport" />
+    <title>Chat Page</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+        rel="stylesheet"
+    />
+    <style>
+        /* Main */
+        @import url("https://fonts.googleapis.com/css2?family=Inter&display=swap");
+        body {
+            font-family: "Inter", sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            display: flex;
+            min-height: 100vh;
+            background-color: #2a7d7d;
+        }
+        input::placeholder {
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        /* Bagian Chat Massage */
+        .chat-messages {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+        .chat-messages::-webkit-scrollbar {
+            width: 6px;
+        }
+        .chat-messages::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .chat-messages::-webkit-scrollbar-thumb {
+            background-color: rgba(255, 255, 255, 0.3);
+            border-radius: 3px;
+        }
+        .chat-messages::-webkit-scrollbar-thumb:hover {
+            background-color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Bagian Daftar Chat */
+        .chat-list-items {
+            flex-grow: 1;
+            
+            padding-right: 10px;
+        }
+        .chat-list-items::-webkit-scrollbar {
+            width: 6px;
+        }
+        .chat-list-items::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .chat-list-items::-webkit-scrollbar-thumb {
+            background-color: rgba(0, 0, 0, 0.1);
+            border-radius: 3px;
+        }
+        .chat-list-items::-webkit-scrollbar-thumb:hover {
+            background-color: rgba(0, 0, 0, 0.2);
+        }
+
+        /* Layer Putih - Kiri */
+        .left-white-layer {
+            position: fixed;
+            top: 32px;
+            bottom: 32px;
+            left: 0;
+            width: 64px;
+            background-color: white;
+            border-top-right-radius: 20px;
+            border-bottom-right-radius: 20px;
+            border-right: 2px solid #4db0b0;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 1.5rem 0;
+            z-index: 30;
+            align-items: center;
+        }
+        .left-white-layer a {
+            color: #4db0b0;
+            font-size: 2rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 48px;
+            width: 100%;
+            text-decoration: none; /* Hilangkan underline default link */
+        }
+        .left-white-layer a:hover {
+            opacity: 0.8;
+        }
+
+        /* Layer Putih - Kanan */
+        .right-white-layer {
+            position: fixed;
+            top: 32px;
+            bottom: 32px;
+            left: 72px;
+            right: 40px;
+            background-color: white;
+            border-radius: 20px;
+            border-left: 2px solid #4db0b0;
+            z-index: 20;
+            padding: 1rem;
+            
+        }
+
+        /* Main Container Chat */
+        .main-container {
+            position: fixed;
+            top: 64px;
+            bottom: 110px;
+            left: 400px;
+            right: 56px;
+            max-height: none;
+            border-radius: 20px;
+            background-color: #2a7d7d;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            z-index: 30;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Input Bar - Terpisah di dalam layer putih kanan */
+        .input-container {
+            position: fixed;
+            bottom: 60px;
+            left: 400px;
+            right: 56px;
+            z-index: 35;
+        }
+
+        /* Header Chat */
+        .chat-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+            border-bottom: 3px solid white;
+            padding-bottom: 0.5rem;
+            color: white;
+            font-weight: 700;
+            font-size: 1.125rem;
+        }
+        .chat-header i {
+            margin-right: 0.75rem;
+            font-size: 1.25rem;
+        }
+
+        /* Chat Massage Container */
+        .chat-messages-container {
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+
+        /* Bubble Chat */
+        .chat-bubble {
+            background-color: #ffffff;
+            color: #2a7d7d;
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            max-width: 70%;
+            line-height: 1.2;
+            word-wrap: break-word; /* Agar teks panjang tidak keluar bubble */
+        }
+        .chat-bubble-left {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+            gap: 0.75rem;
+        }
+        .chat-bubble-right {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+            gap: 0.75rem;
+            justify-content: flex-end;
+        }
+        .chat-bubble-right .chat-bubble {
+            background-color: #4db0b0;
+            color: white;
+        }
+
+        /* Bar Input */
+        .input-bar {
+            display: flex;
+            align-items: center;
+            background-color: #369191;
+            border-radius: 20px;
+            padding: 0.5rem 1rem;
+            gap: 1rem;
+        }
+        .input-bar button {
+            color: white;
+            font-size: 1.25rem;
+            font-weight: 700;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+        .input-bar input {
+            background-color: transparent;
+            border: none;
+            outline: none;
+            color: white;
+            font-weight: 600;
+            font-size: 0.875rem;
+            flex-grow: 1;
+            border-radius: 20px;
+            padding: 0.25rem 0.75rem;
+        }
+
+        /* List Kontak */
+        .chat-list-items {
+            padding: 0.5rem;
+        }
+        .chat-list-items > div {
+            background-color: #2a7d7d;
+            color: white;
+            border-radius: 9999px;
+            margin-bottom: 0.5rem;
+            padding: 0.5rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            max-width: 270px;
+            cursor: pointer;
+        }
+        .chat-list-items > div i {
+            color: #4db0b0;
+            font-size: 1.25rem;
+            min-width: 24px;
+            text-align: center;
+        }
+        .chat-list-items > div .text-white {
+            flex-grow: 1;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+        .chat-list-items > div .text-white p {
+            margin: 0;
+        }
+        .chat-list-items > div:hover {
+            opacity: 0.9;
+        }
+
+        /* Bagian atas Layer Putih - Kanan */
+        .right-white-layer > div.flex.items-center.space-x-2.mb-4 button:hover {
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="left-white-layer">
+        <a href="homePage.html" title="Home"><i class="fas fa-syringe self-center"></i></a>
+        <a href="profilePage.html" title="Profile"><i class="fas fa-user-circle self-center"></i></a>
+    </div>
+
+    <div class="right-white-layer">
+        <div class="flex items-center space-x-2 mb-4">
+            <button class="text-[#2a7d7d] text-xl font-light tracking-tight" onclick="history.back()" title="Kembali">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <div
+                class="flex items-center bg-[#4db0b0] rounded-full px-3 py-1 w-full max-w-[270px]"
+            >
+                <i class="fas fa-search text-white text-lg"></i>
+                <input
+                    class="bg-[#4db0b0] placeholder-white placeholder-opacity-80 text-white text-sm font-semibold focus:outline-none ml-2 w-full"
+                    placeholder="Cari Chat"
+                    type="text"
+                    id="chatSearchInput"
+                />
+            </div>
+        </div>
+
+        <div class="chat-list-items">
+            <div
+                class="flex items-center bg-[#2a7d7d] rounded-full px-3 py-2 space-x-3"
+                style="box-shadow: inset 4px 0 0 #4db0b0;"
+                onclick="switchChat('Dokter Umum')"
+            >
+                <i class="fas fa-user-circle text-[#4db0b0] text-xl"></i>
+                <div class="text-white text-sm leading-tight">
+                    <p class="font-bold text-base">Dokter Umum</p>
+                    <p class="font-light text-xs">Halo user, saya dokter</p>
+                </div>
+            </div>
+            <div
+                class="flex items-center bg-[#2a7d7d] rounded-full px-3 py-2 space-x-3"
+                style="box-shadow: inset 4px 0 0 #4db0b0;"
+                onclick="switchChat('Dokter Anak')"
+            >
+                <i class="fas fa-user-circle text-[#4db0b0] text-xl"></i>
+                <div class="text-white text-sm leading-tight">
+                    <p class="font-bold text-base">Dokter Anak</p>
+                    <p class="font-light text-xs">Halo user, saya dokter</p>
+                </div>
+            </div>
+            <div
+                class="flex items-center bg-[#2a7d7d] rounded-full px-3 py-2 space-x-3"
+                style="box-shadow: inset 4px 0 0 #4db0b0;"
+                onclick="switchChat('Dokter Hewan')"
+            >
+                <i class="fas fa-user-circle text-[#4db0b0] text-xl"></i>
+                <div class="text-white text-sm leading-tight">
+                    <p class="font-bold text-base">Dokter Hewan</p>
+                    <p class="font-light text-xs">Halo user, saya dokter</p>
+                </div>
+            </div>
+            <div
+                class="flex items-center bg-[#2a7d7d] rounded-full px-3 py-2 space-x-3"
+                style="box-shadow: inset 4px 0 0 #4db0b0;"
+                onclick="switchChat('Dokter Cinta')"
+            >
+                <i class="fas fa-user-circle text-[#4db0b0] text-xl"></i>
+                <div class="text-white text-sm leading-tight">
+                    <p class="font-bold text-base">Dokter Cinta</p>
+                    <p class="font-light text-xs">Halo user, saya dokter</p>
+                </div>
+            </div>
+            <div
+                class="flex items-center bg-[#2a7d7d] rounded-full px-3 py-2 space-x-3"
+                style="box-shadow: inset 4px 0 0 #4db0b0;"
+                onclick="switchChat('Dokter Bedah')"
+            >
+                <i class="fas fa-user-circle text-[#4db0b0] text-xl"></i>
+                <div class="text-white text-sm leading-tight">
+                    <p class="font-bold text-base">Dokter Bedah</p>
+                    <p class="font-light text-xs">Halo user, saya dokter</p>
+                </div>
+            </div>
+            <div
+                class="flex items-center bg-[#2a7d7d] rounded-full px-3 py-2 space-x-3"
+                style="box-shadow: inset 4px 0 0 #4db0b0;"
+                onclick="switchChat('Customer Service')"
+            >
+                <i class="fas fa-user-circle text-[#4db0b0] text-xl"></i>
+                <div class="text-white text-sm leading-tight">
+                    <p class="font-bold text-base">Customer Service</p>
+                    <p class="font-light text-xs">Halo user, saya CS</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <div class="chat-header">
+            <i class="fas fa-user-circle"></i>
+            <span id="currentDoctorName">Dokter Umum</span>
+        </div>
+
+        <div class="chat-messages-container chat-messages">
+            </div>
+    </div>
+
+    <div class="input-container">
+        <div class="input-bar">
+            <button><i class="fas fa-plus"></i></button>
+            <input id="messageInput" placeholder="Ketik Pesan" type="text" />
+            <button id="sendButton"><i class="fas fa-paper-plane"></i></button>
+        </div>
+    </div>
+
+    <script>
+        const chatHistory = {
+            'Dokter Umum': [
+                { sender: 'left', message: 'Halo user, saya dokter umum, bila ada masalah yang membutuhkan konsultasi, beritahu saya' }
+            ],
+            'Dokter Anak': [
+                { sender: 'left', message: 'Halo user, saya dokter anak, bila ada masalah yang membutuhkan konsultasi, beritahu saya. Ada pertanyaan seputar tumbuh kembang anak?' }
+            ],
+            'Dokter Hewan': [
+                { sender: 'left', message: 'Halo user, saya dokter hewan, bila ada masalah yang membutuhkan konsultasi, beritahu saya. Ada keluhan apa tentang hewan peliharaan Anda?' }
+            ],
+            'Dokter Cinta': [
+                { sender: 'left', message: 'Halo user, saya dokter cinta, bila ada masalah yang membutuhkan konsultasi, beritahu saya. Curhat saja, saya siap mendengarkan masalah asmaramu.' }
+            ],
+            'Dokter Bedah': [
+                { sender: 'left', message: 'Halo user, saya dokter bedah, bila ada masalah yang membutuhkan konsultasi, beritahu saya. Ada yang perlu dibedah? wkkwkw. Ada yang bisa saya bantu?' }
+            ],
+            'Customer Service': [
+                { sender: 'left', message: 'Selamat datang di Customer Service. Ada yang bisa kami bantu?' }
+            ]
+        };
+
+        let currentDoctor = 'Dokter Umum';
+
+        // Menampilkan Massage ke UI
+        function displayMessage(sender, message) {
+            const chatMessages = document.querySelector('.chat-messages');
+            const messageBubble = document.createElement('div');
+            messageBubble.className = `chat-bubble-${sender}`;
+            messageBubble.innerHTML = `
+                ${sender === 'left' ? '<i class="fas fa-user-circle"></i>' : ''}
+                <p class="chat-bubble">${message}</p>
+                ${sender === 'right' ? '<i class="fas fa-user-circle"></i>' : ''}
+            `;
+            chatMessages.appendChild(messageBubble);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // Send Massage
+        function sendMessage() {
+            const messageInput = document.getElementById('messageInput');
+            const messageText = messageInput.value.trim();
+            
+            if (messageText === '') return;
+    
+            if (!chatHistory[currentDoctor]) {
+                chatHistory[currentDoctor] = [];
+            }
+            chatHistory[currentDoctor].push({ sender: 'right', message: messageText });
+            displayMessage('right', messageText); // Tampilkan langsung
+
+            messageInput.value = '';
+            
+            // Auto reply dari Dokter
+            setTimeout(() => {
+                const replyMessage = "Terima kasih atas pesan Anda. Bagaimana saya bisa membantu Anda hari ini?";
+                chatHistory[currentDoctor].push({ sender: 'left', message: replyMessage });
+                displayMessage('left', replyMessage);
+            }, 1000);
+        }
+        
+        // Event listener saat DOM ready
+        document.addEventListener('DOMContentLoaded', () => {
+            const openCustomerService = localStorage.getItem('openCustomerService');
+            if (openCustomerService === 'true') {
+                localStorage.removeItem('openCustomerService');
+                switchChat('Customer Service');
+            } else {
+                loadChatHistory(currentDoctor);
+            }
+
+            document.getElementById('sendButton').addEventListener('click', sendMessage);
+        
+            document.getElementById('messageInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+            
+            // Search Chat
+            document.getElementById('chatSearchInput').addEventListener('input', function(e) {
+                const searchTerm = e.target.value.toLowerCase();
+                const chatItems = document.querySelectorAll('.chat-list-items > div');
+                
+                chatItems.forEach(item => {
+                    const doctorNameElement = item.querySelector('.font-bold');
+                    const lastMessageElement = item.querySelector('.font-light');
+
+                    if (doctorNameElement && lastMessageElement) {
+                        const doctorName = doctorNameElement.textContent.toLowerCase();
+                        const lastMessage = lastMessageElement.textContent.toLowerCase();
+                        
+                        if (doctorName.includes(searchTerm) || lastMessage.includes(searchTerm)) {
+                            item.style.display = 'flex';
+                        } else {
+                            item.style.display = 'none';
+                        }
+                    }
+                });
+            });
+        });
+        
+        // Swtich Chat di List Kontak
+        function switchChat(doctorName) {
+            currentDoctor = doctorName;
+            document.getElementById('currentDoctorName').textContent = doctorName;
+            
+            loadChatHistory(doctorName); 
+        }
+
+        // History Chat
+        function loadChatHistory(doctorName) {
+            const chatMessages = document.querySelector('.chat-messages');
+            chatMessages.innerHTML = ''; // Clear History chat
+
+            const history = chatHistory[doctorName];
+            if (history) {
+                history.forEach(msg => {
+                    displayMessage(msg.sender, msg.message);
+                });
+            } else {
+                const initialMessage = `Halo, saya ${doctorName}. Ada yang bisa saya bantu hari ini?`;
+                chatHistory[doctorName] = [{ sender: 'left', message: initialMessage }];
+                displayMessage('left', initialMessage);
+            }
+        }
+    </script>
+</body>
+</html>
