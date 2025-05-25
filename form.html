@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Buka Tiket Baru</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Font Inter -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+  </style>
+</head>
+<body class="bg-teal-700 min-h-screen flex items-center justify-center px-4">
+
+  <div class="bg-white p-8 rounded-xl shadow-lg w-full max-w-2xl">
+    <h1 class="text-2xl font-bold text-teal-700 mb-4">Buka Tiket Baru</h1>
+    <p class="mb-6 text-gray-700">Silahkan isi formulir berikut ini untuk membuka sebuah tiket baru.</p>
+
+    <form>
+      <!-- Email -->
+      <div class="mb-4">
+        <label class="block font-semibold text-gray-700 mb-1">Alamat Email *</label>
+        <input type="email" required class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-teal-500" placeholder="email@example.com" />
+        <p class="text-sm text-gray-500 mt-1">Gunakan email valid untuk menerima nomor antrian.</p>
+      </div>
+
+      <!-- Info Anak -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="block font-semibold text-gray-700 mb-1">Nama Anak</label>
+          <input type="text" class="w-full border border-gray-300 rounded-lg px-4 py-2" />
+        </div>
+        <div>
+          <label class="block font-semibold text-gray-700 mb-1">Nama Ayah</label>
+          <input type="text" class="w-full border border-gray-300 rounded-lg px-4 py-2" />
+        </div>
+        <div>
+          <label class="block font-semibold text-gray-700 mb-1">Nama Ibu</label>
+          <input type="text" class="w-full border border-gray-300 rounded-lg px-4 py-2" />
+        </div>
+        <div>
+          <label class="block font-semibold text-gray-700 mb-1">Usia Anak</label>
+          <input type="number" class="w-full border border-gray-300 rounded-lg px-4 py-2" />
+        </div>
+        <div>
+          <label class="block font-semibold text-gray-700 mb-1">Jenis Kelamin</label>
+          <select class="w-full border border-gray-300 rounded-lg px-4 py-2">
+            <option value="">Pilih</option>
+            <option>Laki-laki</option>
+            <option>Perempuan</option>
+          </select>
+        </div>
+        <div>
+          <label class="block font-semibold text-gray-700 mb-1">Alamat</label>
+          <textarea class="w-full border border-gray-300 rounded-lg px-4 py-2" rows="2"></textarea>
+        </div>
+      </div>
+
+      <!-- Pilih Rumah Sakit -->
+      <div class="mt-4">
+        <label class="block font-medium text-gray-700 mb-1">Pilih Rumah Sakit</label>
+        <select class="w-full border border-gray-300 rounded-lg px-4 py-2" required>
+          <option value="">-- Pilih Rumah Sakit --</option>
+          <option>RS Universitas Brawijaya</option>
+          <option>RS Lavalette</option>
+          <option>RS Permata Bunda</option>
+        </select>
+      </div>
+
+      <!-- Pilih Vaksin -->
+      <div class="mt-4">
+        <label class="block font-semibold text-gray-700 mb-1">Pilih Jenis Vaksin</label>
+        <select class="w-full border border-gray-300 rounded-lg px-4 py-2">
+          <option value="">-- Pilih Vaksin --</option>
+          <option>BCG</option>
+          <option>Hepatitis B</option>
+          <option>Polio</option>
+          <option>DPT</option>
+          <option>Hib</option>
+          <option>Campak</option>
+          <option>MMR</option>
+          <option>PCV</option>
+          <option>Rotavirus</option>
+          <option>HPV</option>
+          <option>Varisela</option>
+        </select>
+      </div>
+
+      <!-- Pilih Tanggal -->
+      <div class="mt-4">
+        <label class="block font-semibold text-gray-700 mb-1">Pilih Tanggal Vaksin</label>
+        <input type="date" class="w-full border border-gray-300 rounded-lg px-4 py-2" />
+      </div>
+
+      <!-- Tombol -->
+      <div class="flex justify-end space-x-4 mt-6">
+        <button type="reset" class="px-4 py-2 rounded-lg border border-gray-400 text-gray-700 hover:bg-gray-100 transition">Reset</button>
+        <a href="location.html" class="px-4 py-2 rounded-lg border border-red-500 text-red-500 hover:bg-red-50 transition">Batal</a>
+        <button type="submit" class="px-4 py-2 bg-teal-700 text-white rounded-lg hover:bg-teal-800 transition">Simpan</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Pop-up sukses -->
+  <div id="popupSuccess" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+    <div class="bg-white rounded-xl p-6 w-[95%] max-w-xl text-center shadow-2xl relative">
+      <h2 class="text-2xl font-bold text-teal-700 mb-2">Tiket Anda Berhasil Dibuat!</h2>
+      <p class="text-gray-700 mb-1">Nomor Antrian Anda:</p>
+      <div class="text-4xl font-bold text-teal-700 mb-6" id="antrianNumber">A-001</div>
+      <a href="location.html" class="bg-teal-700 hover:bg-teal-800 text-white py-2 px-6 rounded-full transition duration-200">
+        Kembali ke Beranda
+      </a>
+    </div>
+  </div>
+
+  <script>
+    const form = document.querySelector('form');
+    const popup = document.getElementById('popupSuccess');
+    const antrianElement = document.getElementById('antrianNumber');
+    let currentAntrian = 1;
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      if (currentAntrian > 100) currentAntrian = 1;
+
+      const formattedAntrian = 'A-' + String(currentAntrian).padStart(3, '0');
+      antrianElement.textContent = formattedAntrian;
+
+      popup.classList.remove('hidden');
+      popup.classList.add('flex');
+
+      currentAntrian++;
+      form.reset();
+    });
+  </script>
+
+</body>
+</html>

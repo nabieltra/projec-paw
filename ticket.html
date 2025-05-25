@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Daftar Tiket</title>
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Font Inter -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+  </style>
+</head>
+<body class="bg-teal-700 min-h-screen flex items-center justify-center px-4">
+
+  <!-- Main Content -->
+  <div class="bg-white w-full max-w-6xl rounded-xl p-6 flex flex-col min-h-[90vh]">
+    <h1 class="text-3xl font-bold text-teal-700 mb-6">DAFTAR TIKET</h1>
+
+    <div class="flex gap-6 flex-grow">
+      <!-- Kalender Placeholder -->
+      <div class="w-1/3 bg-gray-100 rounded-xl p-4 border-4 border-teal-700">
+        <h2 class="text-lg font-semibold text-teal-700 mb-2">Kalender</h2>
+        <div class="text-sm text-gray-500 italic">Fitur kalender akan ditambahkan.</div>
+      </div>
+
+      <!-- Daftar Tiket -->
+      <div id="ticketList" class="flex-1 bg-gray-100 rounded-xl p-4 border-4 border-teal-700 overflow-y-auto max-h-[500px] space-y-4">
+        <h2 class="text-lg font-semibold text-teal-700 mb-4">Tiket Anda</h2>
+        <!-- Tiket akan dimuat oleh JavaScript -->
+      </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <div class="mt-6 bg-teal-700 py-4 px-8 rounded-full flex justify-between items-center text-white">
+      <i class="fas fa-home text-xl"></i>
+      <i class="fas fa-user text-xl"></i>
+      <i class="fas fa-calendar-alt text-xl"></i>
+      <i class="fas fa-book-open text-xl"></i>
+      <i class="fas fa-map-marker-alt text-xl"></i>
+    </div>
+  </div>
+
+  <script>
+    const ticketList = document.getElementById("ticketList");
+
+    // Cek dan buat data dummy jika belum ada di localStorage
+    function seedDummyData() {
+      const existing = JSON.parse(localStorage.getItem("tiketList"));
+      if (!existing || existing.length === 0) {
+        const dummy = [
+          {
+            nama: "Ali",
+            rs: "RS Lavalette",
+            tanggal: "2025-06-01",
+            jam: "09:00",
+            antrian: "#023"
+          },
+          {
+            nama: "Budi",
+            rs: "RS Brawijaya",
+            tanggal: "2025-06-02",
+            jam: "10:15",
+            antrian: "#045"
+          },
+          {
+            nama: "Citra",
+            rs: "RS Permata Bunda",
+            tanggal: "2025-06-03",
+            jam: "08:45",
+            antrian: "#011"
+          }
+        ];
+        localStorage.setItem("tiketList", JSON.stringify(dummy));
+      }
+    }
+
+    function loadTickets() {
+      const tickets = JSON.parse(localStorage.getItem("tiketList")) || [];
+
+      ticketList.innerHTML = '<h2 class="text-lg font-semibold text-teal-700 mb-4">Tiket Anda</h2>';
+
+      if (tickets.length === 0) {
+        ticketList.innerHTML += '<p class="text-sm text-gray-500 italic">Belum ada tiket.</p>';
+        return;
+      }
+
+      tickets.forEach((ticket, location) => {
+        const card = document.createElement("div");
+        card.className = "bg-white rounded-lg p-4 shadow-md border-l-4 border-teal-600 space-y-1";
+
+        card.innerHTML = `
+          <p class="text-sm text-gray-600">Nama Anak: <span class="font-semibold">${ticket.nama}</span></p>
+          <p class="text-sm text-gray-600">Rumah Sakit: ${ticket.rs}</p>
+          <p class="text-sm text-gray-600">Tanggal: ${ticket.tanggal}</p>
+          <p class="text-sm text-gray-600">Jam: ${ticket.jam}</p>
+          <p class="text-sm text-gray-600">Nomor Antrian: <span class="font-bold text-teal-700">${ticket.antrian}</span></p>
+          <div class="pt-2">
+            <button onclick="cancelTicket(${location})"
+            class="px-4 py-2 text-sm bg-red-100 text-red-600 font-medium rounded-md hover:bg-red-200 transition">
+            Batalkan Vaksinasi
+            </button>
+          </div>
+
+        `;
+
+        ticketList.appendChild(card);
+      });
+    }
+
+    function cancelTicket(location) {
+      const confirmCancel = confirm("Yakin ingin membatalkan vaksinasi ini?");
+      if (!confirmCancel) return;
+
+      const tickets = JSON.parse(localStorage.getItem("tiketList")) || [];
+      tickets.splice(location, 1);
+      localStorage.setItem("tiketList", JSON.stringify(tickets));
+      loadTickets();
+    }
+
+    // Seed dummy data jika belum ada
+    seedDummyData();
+    loadTickets();
+  </script>
+</body>
+</html>
